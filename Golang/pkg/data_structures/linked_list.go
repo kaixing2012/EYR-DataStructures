@@ -1,63 +1,63 @@
 package data_structures
 
-type Node struct {
-	value interface{}
-	next  *Node
+type LinkedNode struct {
+	Val  interface{}
+	Next *LinkedNode
 }
 
 type LinkedList struct {
-	head *Node
+	Head *LinkedNode
 }
 
 func (std *LinkedList) Insert(val interface{}) {
-	if std.head == nil {
-		std.head = &Node{val, nil}
+	if std.Head == nil {
+		std.Head = &LinkedNode{val, nil}
 
 		return
 	}
 
-	if std.head.next == nil {
-		std.head.next = &Node{val, nil}
+	if std.Head.Next == nil {
+		std.Head.Next = &LinkedNode{val, nil}
 
 		return
 	}
 
-	next := std.head.next
+	next := std.Head.Next
 
-	for next.next != nil {
-		next = next.next
+	for next.Next != nil {
+		next = next.Next
 	}
 
-	next.next = &Node{val, nil}
+	next.Next = &LinkedNode{val, nil}
 }
 
 func (std *LinkedList) Retrieve(val interface{}) interface{} {
 	var resultSet map[string]interface{}
 
-	if std.head != nil {
+	if std.Head != nil {
 		index := 0
 
-		if std.head.value == val {
+		if std.Head.Val == val {
 			resultSet = map[string]interface{}{
 				"idx": index,
-				"val": std.head.value,
+				"val": std.Head.Val,
 			}
 		}
 
 		if resultSet == nil {
-			next := std.head.next
+			next := std.Head.Next
 
 			for next != nil {
 				index++
 
-				if next.value == val {
+				if next.Val == val {
 					resultSet = map[string]interface{}{
 						"idx": index,
-						"val": next.value,
+						"val": next.Val,
 					}
 				}
 
-				next = next.next
+				next = next.Next
 			}
 		}
 	}
@@ -68,29 +68,29 @@ func (std *LinkedList) Retrieve(val interface{}) interface{} {
 func (std *LinkedList) FilterByVal(val interface{}) interface{} {
 	var resultSet []interface{}
 
-	if std.head != nil {
+	if std.Head != nil {
 		index := 0
 
-		if std.head.value == val {
+		if std.Head.Val == val {
 			resultSet = append(resultSet, map[string]interface{}{
 				"idx": index,
-				"val": std.head.value,
+				"val": std.Head.Val,
 			})
 		}
 
-		next := std.head.next
+		next := std.Head.Next
 
 		for next != nil {
 			index++
 
-			if next.value == val {
+			if next.Val == val {
 				resultSet = append(resultSet, map[string]interface{}{
 					"idx": index,
-					"val": next.value,
+					"val": next.Val,
 				})
 			}
 
-			next = next.next
+			next = next.Next
 		}
 
 	}
@@ -101,26 +101,26 @@ func (std *LinkedList) FilterByVal(val interface{}) interface{} {
 func (std *LinkedList) Update(oldVal interface{}, newVal interface{}) bool {
 	result := false
 
-	if std.head != nil {
+	if std.Head != nil {
 
-		if std.head.value == oldVal {
-			std.head.value = newVal
+		if std.Head.Val == oldVal {
+			std.Head.Val = newVal
 
-			result = std.head.value == newVal
+			result = std.Head.Val == newVal
 		}
 
 		if !result {
-			next := std.head.next
+			next := std.Head.Next
 
 			for next != nil {
-				if next.value == oldVal {
-					next.value = newVal
+				if next.Val == oldVal {
+					next.Val = newVal
 
-					result = next.value == newVal
+					result = next.Val == newVal
 					break
 				}
 
-				next = next.next
+				next = next.Next
 			}
 		}
 
@@ -132,29 +132,29 @@ func (std *LinkedList) Update(oldVal interface{}, newVal interface{}) bool {
 func (std *LinkedList) Delete(val interface{}) bool {
 	result := false
 
-	if std.head != nil {
+	if std.Head != nil {
 
-		if std.head.value == val {
-			if std.head.next != nil {
-				std.head = std.head.next
+		if std.Head.Val == val {
+			if std.Head.Next != nil {
+				std.Head = std.Head.Next
 			} else {
-				std.head = nil
+				std.Head = nil
 			}
 
 			result = true
 		}
 
 		if !result {
-			prev := std.head
-			next := std.head.next
+			prev := std.Head
+			next := std.Head.Next
 
 			for next != nil {
 
-				if next.value == val {
-					if next.next != nil {
-						prev.next = next.next
+				if next.Val == val {
+					if next.Next != nil {
+						prev.Next = next.Next
 					} else {
-						prev.next = nil
+						prev.Next = nil
 					}
 
 					result = true
@@ -162,7 +162,7 @@ func (std *LinkedList) Delete(val interface{}) bool {
 				}
 
 				prev = next
-				next = next.next
+				next = next.Next
 			}
 		}
 	}
@@ -173,16 +173,35 @@ func (std *LinkedList) Delete(val interface{}) bool {
 func (std *LinkedList) Size() int {
 	var count []interface{}
 
-	if std.head != nil {
-		count = append(count, std.head)
+	if std.Head != nil {
+		count = append(count, std.Head)
 
-		next := std.head.next
+		next := std.Head.Next
 
 		for next != nil {
-			count = append(count, std.head.value)
-			next = next.next
+			count = append(count, std.Head.Val)
+			next = next.Next
 		}
 	}
 
 	return len(count)
+}
+
+func (std *LinkedList) Reverse() {
+	if std.Head == nil {
+		return
+	}
+
+	var curr *LinkedNode = std.Head
+	var prev *LinkedNode = nil
+	var next *LinkedNode = nil
+
+	for curr != nil {
+		next = curr.Next
+		curr.Next = prev
+		prev = curr
+		curr = next
+	}
+
+	std.Head = prev
 }
